@@ -6,16 +6,16 @@ const banner = document.querySelector('.app__image')
 const titulo = document.querySelector('.app__title')
 const botoes = document.querySelectorAll('.app__card-button')
 const musicaFocoInput = document.querySelector('#alternar-musica')
-const musica = new Audio('/Fokus-projeto-base/sons/luna-rise-part-one.mp3')
+const musica = new Audio('/sons/luna-rise-part-one.mp3')
 const iniciarOuPausarBt = document.querySelector('#start-pause span')
 const startPauseBt = document.querySelector('#start-pause')
 const imagePlayPause = document.querySelector('#start-pause img')
 const tempoNaTela = document.querySelector('#timer')
-const audioPlay = new Audio('/Fokus-projeto-base/sons/play.wav');
-const audioPausa = new Audio('/Fokus-projeto-base/sons/pause.mp3');
-const audioTempoFinalizado = new Audio('/Fokus-projeto-base/sons/beep.mp3')
-const imagePlay = ('/Fokus-projeto-base/imagens/play_arrow.png')
-const imagePause = ('/Fokus-projeto-base/imagens/pause.png')
+const audioPlay = new Audio('/sons/play.wav');
+const audioPausa = new Audio('/sons/pause.mp3');
+const audioTempoFinalizado = new Audio('/sons/beep.mp3')
+const imagePlay = ('/imagens/play_arrow.png')
+const imagePause = ('/imagens/pause.png')
 
 let tempoDecorridoEmSegundos = 1500 // 25 minutos
 let intervaloContagemRegresiva = null
@@ -53,7 +53,7 @@ function alterarContexto(contexto) {
         botao.classList.remove('active')
     })
     html.setAttribute('data-contexto', contexto) // Alterar atributo data-contexto no elemento <html>
-    banner.setAttribute('src', `/Fokus-projeto-base/imagens/${contexto}.png`)// o src é alterado conforme o contexto
+    banner.setAttribute('src', `/imagens/${contexto}.png`)// o src é alterado conforme o contexto
     switch (contexto) {
         case 'foco':
             titulo.innerHTML = 'Otimize sua produtividade,\nmergulhe no que importa'
