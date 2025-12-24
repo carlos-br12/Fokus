@@ -16,7 +16,6 @@ const audioPausa = new Audio('/sons/pause.mp3');
 const audioTempoFinalizado = new Audio('/sons/beep.mp3')
 const imagePlay = ('/imagens/play_arrow.png')
 const imagePause = ('/imagens/pause.png')
-
 let tempoDecorridoEmSegundos = 1500 // 25 minutos
 let intervaloContagemRegresiva = null
 
