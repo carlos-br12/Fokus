@@ -52,8 +52,8 @@ function alterarContexto(contexto) {
     botoes.forEach((botao) => {
         botao.classList.remove('active')
     })
-    html.setAttribute('data-contexto', contexto)
-    banner.setAttribute('src', `/Fokus-projeto-base/imagens/${contexto}.png`)
+    html.setAttribute('data-contexto', contexto) // Alterar atributo data-contexto no elemento <html>
+    banner.setAttribute('src', `/Fokus-projeto-base/imagens/${contexto}.png`)// o src é alterado conforme o contexto
     switch (contexto) {
         case 'foco':
             titulo.innerHTML = 'Otimize sua produtividade,\nmergulhe no que importa'
