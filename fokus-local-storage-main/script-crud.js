@@ -17,7 +17,7 @@ function criarElementoTarefa(tarefa) {
     <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0z"/>
   </svg>`
 
-  const paragrafo = document.createElement('p') // cria um elemento de parágrafo para a descrição da tarefa
+  const paragrafo = document.createElement('p') // cria um elemento de parágrafo para a descrição da tarefa.
   paragrafo.textContent = tarefa.descricao // define o texto do parágrafo como a descrição da tarefa
   paragrafo.classList.add('app__section-task-list-item-description') // adiciona a classe CSS ao parágrafo
 
