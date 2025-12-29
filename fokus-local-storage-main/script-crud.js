@@ -3,9 +3,12 @@ const btnAdicionarTarefa = document.querySelector('.app__button--add-task')
 const formeAdicionarTarefa = document.querySelector('.app__form-add-task')
 const textArea = document.querySelector('.app__form-textarea')
 const urlTarefas = document.querySelector('.app__section-task-list') // lista onde as tarefas serão exibidas
-
+const paragrafoDaDescricaoTarefa = document.querySelector('.app__section-active-task-description')
 const tarefas = JSON.parse(localStorage.getItem('tarefas')) || [] // recupera as tarefas do localStorage ou inicializa um array vazio
 
+function atualizarTarefas() {
+    localStorage.setItem('tarefas', JSON.stringify(tarefas)) // salva o array de tarefas no localStorage
+}
 
 function criarElementoTarefa(tarefa) {
     const li = document.createElement('li') // cria um elemento de lista
@@ -23,6 +26,16 @@ function criarElementoTarefa(tarefa) {
 
   const botao = document.createElement('button') // cria um botão para marcar a tarefa como concluída
   botao.classList.add('app_button-edit') // adiciona a classe CSS ao botão
+  botao.onclick = () => {
+    //debugger
+    const novaDescricao = prompt('Qual é o nome da tarefa?', tarefa.descricao) // exibe um prompt para editar a descrição da tarefa
+    //console.log("nova Descricao da tarefa" + novaDescricao);
+    if (novaDescricao) {
+        paragrafo.textContent = novaDescricao // atualiza o texto do parágrafo com a nova descrição
+        tarefa.descricao = novaDescricao // atualiza a descrição da tarefa no objeto
+        atualizarTarefas() // salva as alterações no localStorage
+    }
+  }
 
   const imgDoBotao = document.createElement('img') // cria uma imagem para o botão
 
@@ -30,6 +43,13 @@ function criarElementoTarefa(tarefa) {
   botao.appendChild(imgDoBotao) // adiciona a imagem ao botão
 
   li.append(paragrafo, svg, botao) // adiciona o parágrafo, o SVG e o botão ao elemento de lista
+  
+  li.onclick = () => {
+    paragrafoDaDescricaoTarefa.textContent = tarefa.descricao // atualiza a descrição da tarefa ativa na interface
+    const itensAtivos = document.querySelectorAll('.app__section-task-list-item-active') // seleciona todos os itens ativos
+    itensAtivos.forEach(item => item.classList.remove('app__section-task-list-item-active')) // remove a classe de todos os itens ativos
+    li.classList.add('app__section-task-list-item-active') // adiciona a classe CSS para destacar a tarefa ativa
+}
   return li // retorna o elemento de lista criado
 }
 
@@ -47,7 +67,7 @@ formeAdicionarTarefa.addEventListener('submit', (event) => {
     tarefas.push(tarefa) // adiciona a nova tarefa ao array
     const elementoTarefa = criarElementoTarefa(tarefa) // cria o elemento de tarefa
     urlTarefas.append(elementoTarefa) // adiciona o elemento de tarefa à lista de tarefas na interface
-    localStorage.setItem('tarefas', JSON.stringify(tarefas)) // salva o array de tarefas no localStorage
+    atualizarTarefas() // salva o array atualizado no localStorage
     textArea.value = '' // limpa o textarea
     formeAdicionarTarefa.classList.add('hidden') // esconde o formulário após adicionar a tarefa
 })
