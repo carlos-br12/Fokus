@@ -6,6 +6,8 @@ const urlTarefas = document.querySelector('.app__section-task-list') // lista on
 const paragrafoDaDescricaoTarefa = document.querySelector('.app__section-active-task-description')
 const tarefas = JSON.parse(localStorage.getItem('tarefas')) || [] // recupera as tarefas do localStorage ou inicializa um array vazio
 
+let tarefaSelecionada = null // variável para rastrear a tarefa atualmente selecionada
+let liTarefaSelecionada = null // variável para rastrear o elemento de lista da tarefa selecionada
 function atualizarTarefas() {
     localStorage.setItem('tarefas', JSON.stringify(tarefas)) // salva o array de tarefas no localStorage
 }
@@ -15,10 +17,10 @@ function criarElementoTarefa(tarefa) {
     li.classList.add('app__section-task-list-item') // adiciona a classe CSS ao elemento de lista
     
     const svg = document.createElement('svg')// cria um elemento SVG para o ícone de tarefa
-    svg.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-circle app__icon--task" viewBox="0 0 16 16">
-    <path d="M2.5 8a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0zm5.354-2.354a.5.5 0 0 0-.708-.708L5.5 7.793 4.854 7.146a.5.5 0 1 0-.708.708l1 1a.5.5 0 0 0 .708 0l3-3z"/>
-    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0z"/>
-  </svg>`
+    svg.innerHTML = `<svg class="app__section-task-icon-status" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="12" fill="#FFF"></circle>
+            <path d="M9 16.1719L19.5938 5.57812L21 6.98438L9 18.9844L3.42188 13.4062L4.82812 12L9 16.1719Z" fill="#01080E"></path>
+        </svg>` // define o conteúdo SVG para o ícone de tarefa concluída
 
   const paragrafo = document.createElement('p') // cria um elemento de parágrafo para a descrição da tarefa.
   paragrafo.textContent = tarefa.descricao // define o texto do parágrafo como a descrição da tarefa
@@ -44,10 +46,19 @@ function criarElementoTarefa(tarefa) {
 
   li.append(paragrafo, svg, botao) // adiciona o parágrafo, o SVG e o botão ao elemento de lista
   
+
   li.onclick = () => {
-    paragrafoDaDescricaoTarefa.textContent = tarefa.descricao // atualiza a descrição da tarefa ativa na interface
     const itensAtivos = document.querySelectorAll('.app__section-task-list-item-active') // seleciona todos os itens ativos
     itensAtivos.forEach(item => item.classList.remove('app__section-task-list-item-active')) // remove a classe de todos os itens ativos
+    if (tarefaSelecionada == tarefa) {
+        paragrafoDaDescricaoTarefa.textContent = '' // limpa a descrição da tarefa ativa na interface
+        tarefaSelecionada = null // desmarca a tarefa ativa
+        liTarefaSelecionada = null // limpa o elemento de lista da tarefa ativa
+        return
+    }
+    tarefaSelecionada = tarefa // marca a tarefa como ativa
+    liTarefaSelecionada = li // armazena o elemento de lista da tarefa ativa
+    paragrafoDaDescricaoTarefa.textContent = tarefa.descricao // atualiza a descrição da tarefa ativa na interface
     li.classList.add('app__section-task-list-item-active') // adiciona a classe CSS para destacar a tarefa ativa
 }
   return li // retorna o elemento de lista criado
@@ -76,3 +87,11 @@ tarefas.forEach(tarefa => {
    const elementoTarefa = criarElementoTarefa(tarefa)// cria o elemento de tarefa
     urlTarefas.append(elementoTarefa) // adiciona o elemento de tarefa à lista de tarefas na interface
 });
+
+document.addEventListener('focoFinalizado', () => {
+    if(tarefaSelecionada && liTarefaSelecionada){
+        liTarefaSelecionada.classList.remove('app__section-task-list-item-active')
+        liTarefaSelecionada.classList.add('app__section-task-list-item-complete')
+        liTarefaSelecionada.querySelector('button').setAttribute('disabled', 'dissabled')
+    }
+})

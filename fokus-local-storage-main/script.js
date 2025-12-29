@@ -49,7 +49,7 @@ longoBt.addEventListener('click', () => {
 
 function alterarContexto(contexto) {
     mostrarTempo()
-    botoes.forEach(function (contexto){
+    botoes.forEach(function (contexto){// remove a classe active de todos os botoes
         contexto.classList.remove('active')
     })
     html.setAttribute('data-contexto', contexto)
@@ -79,19 +79,24 @@ const contagemRegressiva = () => {
     if(tempoDecorridoEmSegundos <= 0){
         audioTempoFinalizado.play()
         alert('Tempo finalizado!')
+        const focoAtivo = html.getAttribute('data-contexto') === 'foco'
+        if(focoAtivo){
+            const evento = new CustomEvent('focoFinalizado')
+            document.dispatchEvent(evento)
+        }
         zerar()
         return
     }
-    tempoDecorridoEmSegundos -= 1
+    tempoDecorridoEmSegundos -= 1   
     mostrarTempo()
 }
 
 startPauseBt.addEventListener('click', iniciarOuPausar)
 
 function iniciarOuPausar() {
-    if(intervaloId){
+    if(intervaloId){// se a contagem regressiva já está em andamento
         audioPausa.play()
-        zerar()
+        zerar()// pausa a contagem regressiva
         return
     }
     audioPlay.play()
@@ -100,7 +105,7 @@ function iniciarOuPausar() {
     iniciarOuPausarBtIcone.setAttribute('src', `./imagens/pause.png`)
 }
 
-function zerar() {
+function zerar() {// para a contagem regressiva
     clearInterval(intervaloId) 
     iniciarOuPausarBt.textContent = "Começar"
     iniciarOuPausarBtIcone.setAttribute('src', `./imagens/play_arrow.png`)
