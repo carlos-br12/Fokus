@@ -5,6 +5,11 @@ const textArea = document.querySelector('.app__form-textarea')
 const urlTarefas = document.querySelector('.app__section-task-list') // lista onde as tarefas serão exibidas
 const paragrafoDaDescricaoTarefa = document.querySelector('.app__section-active-task-description')
 let tarefas = JSON.parse(localStorage.getItem('tarefas')) || [] // recupera as tarefas do localStorage ou inicializa um array vazio
+// Normaliza tarefas antigas que podem usar a chave `concluida`
+tarefas = tarefas.map(t => ({
+    descricao: t.descricao ?? '',
+    completa: t.completa ?? t.concluida ?? false
+}))
 
 const btnRemoverConcluidas = document.querySelector('#btn-remover-concluidas')
 const btnRemoverTodas = document.querySelector('#btn-remover-todas')
@@ -49,10 +54,10 @@ function criarElementoTarefa(tarefa) {
 
   li.append(paragrafo, svg, botao) // adiciona o parágrafo, o SVG e o botão ao elemento de lista
 
-  if (tarefa.completa) {
-    li.classList.add('app__section-task-list-item-complete')// adiciona a classe CSS para tarefas concluídas
-    botao.setAttribute('disabled', 'dissabled')// desabilita o botão de edição para tarefas concluídas
-  } else {
+    if (tarefa.completa) {
+        li.classList.add('app__section-task-list-item-complete')// adiciona a classe CSS para tarefas concluídas
+        botao.setAttribute('disabled', 'disabled')// desabilita o botão de edição para tarefas concluídas
+    } else {
       li.onclick = () => {
       const itensAtivos = document.querySelectorAll('.app__section-task-list-item-active') // seleciona todos os itens ativos
       itensAtivos.forEach(item => item.classList.remove('app__section-task-list-item-active')) // remove a classe de todos os itens ativos
@@ -81,7 +86,7 @@ formeAdicionarTarefa.addEventListener('submit', (event) => {
     event.preventDefault() // previne o comportamento padrão do formulário (recarregar a página)
     const tarefa = {// cria um objeto tarefa com a descrição e o status
         descricao: textArea.value,// obtém a descrição da tarefa do textarea
-        concluida: false // nova tarefa começa como não concluída
+        completa: false // nova tarefa começa como não concluída
     }
     tarefas.push(tarefa) // adiciona a nova tarefa ao array
     const elementoTarefa = criarElementoTarefa(tarefa) // cria o elemento de tarefa
@@ -100,7 +105,7 @@ document.addEventListener('focoFinalizado', () => {
     if(tarefaSelecionada && liTarefaSelecionada){
         liTarefaSelecionada.classList.remove('app__section-task-list-item-active')
         liTarefaSelecionada.classList.add('app__section-task-list-item-complete')
-        liTarefaSelecionada.querySelector('button').setAttribute('disabled', 'dissabled')
+        liTarefaSelecionada.querySelector('button').setAttribute('disabled', 'disabled')
         tarefaSelecionada.completa = true
         atualizarTarefas()
     }
@@ -111,9 +116,11 @@ const removerTarefas = (somenteCompletas) => {
     document.querySelectorAll(seletor).forEach(elemento => {
         elemento.remove()
     })
-    tarefas = somenteCompletas ? tarefas.filter(tarefa => tarefa.completa) : tarefas.filter(tarefa => !tarefa.completa)
+    // Se somenteCompletas for true, remover apenas as completadas; se false, remover todas
+    tarefas = somenteCompletas ? tarefas.filter(tarefa => !tarefa.completa) : []
     atualizarTarefas()
 }
 
 btnRemoverConcluidas.onclick = () => removerTarefas(true)
 btnRemoverTodas.onclick = () => removerTarefas(false)
+
