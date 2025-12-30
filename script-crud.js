@@ -4,7 +4,10 @@ const formeAdicionarTarefa = document.querySelector('.app__form-add-task')
 const textArea = document.querySelector('.app__form-textarea')
 const urlTarefas = document.querySelector('.app__section-task-list') // lista onde as tarefas serão exibidas
 const paragrafoDaDescricaoTarefa = document.querySelector('.app__section-active-task-description')
-const tarefas = JSON.parse(localStorage.getItem('tarefas')) || [] // recupera as tarefas do localStorage ou inicializa um array vazio
+let tarefas = JSON.parse(localStorage.getItem('tarefas')) || [] // recupera as tarefas do localStorage ou inicializa um array vazio
+
+const btnRemoverConcluidas = document.querySelector('#btn-remover-concluidas')
+const btnRemoverTodas = document.querySelector('#btn-remover-todas')
 
 let tarefaSelecionada = null // variável para rastrear a tarefa atualmente selecionada
 let liTarefaSelecionada = null // variável para rastrear o elemento de lista da tarefa selecionada
@@ -45,22 +48,27 @@ function criarElementoTarefa(tarefa) {
   botao.appendChild(imgDoBotao) // adiciona a imagem ao botão
 
   li.append(paragrafo, svg, botao) // adiciona o parágrafo, o SVG e o botão ao elemento de lista
-  
 
-  li.onclick = () => {
-    const itensAtivos = document.querySelectorAll('.app__section-task-list-item-active') // seleciona todos os itens ativos
-    itensAtivos.forEach(item => item.classList.remove('app__section-task-list-item-active')) // remove a classe de todos os itens ativos
-    if (tarefaSelecionada == tarefa) {
+  if (tarefa.completa) {
+    li.classList.add('app__section-task-list-item-complete')// adiciona a classe CSS para tarefas concluídas
+    botao.setAttribute('disabled', 'dissabled')// desabilita o botão de edição para tarefas concluídas
+  } else {
+      li.onclick = () => {
+      const itensAtivos = document.querySelectorAll('.app__section-task-list-item-active') // seleciona todos os itens ativos
+      itensAtivos.forEach(item => item.classList.remove('app__section-task-list-item-active')) // remove a classe de todos os itens ativos
+      if (tarefaSelecionada == tarefa) {
         paragrafoDaDescricaoTarefa.textContent = '' // limpa a descrição da tarefa ativa na interface
         tarefaSelecionada = null // desmarca a tarefa ativa
         liTarefaSelecionada = null // limpa o elemento de lista da tarefa ativa
         return
-    }
-    tarefaSelecionada = tarefa // marca a tarefa como ativa
-    liTarefaSelecionada = li // armazena o elemento de lista da tarefa ativa
-    paragrafoDaDescricaoTarefa.textContent = tarefa.descricao // atualiza a descrição da tarefa ativa na interface
-    li.classList.add('app__section-task-list-item-active') // adiciona a classe CSS para destacar a tarefa ativa
-}
+      }
+      tarefaSelecionada = tarefa // marca a tarefa como ativa
+      liTarefaSelecionada = li // armazena o elemento de lista da tarefa ativa
+      paragrafoDaDescricaoTarefa.textContent = tarefa.descricao // atualiza a descrição da tarefa ativa na interface
+      li.classList.add('app__section-task-list-item-active') // adiciona a classe CSS para destacar a tarefa ativa
+  }
+  }
+
   return li // retorna o elemento de lista criado
 }
 
@@ -93,5 +101,19 @@ document.addEventListener('focoFinalizado', () => {
         liTarefaSelecionada.classList.remove('app__section-task-list-item-active')
         liTarefaSelecionada.classList.add('app__section-task-list-item-complete')
         liTarefaSelecionada.querySelector('button').setAttribute('disabled', 'dissabled')
+        tarefaSelecionada.completa = true
+        atualizarTarefas()
     }
 })
+
+const removerTarefas = (somenteCompletas) => {
+    const seletor = somenteCompletas ? ".app__section-task-list-item-complete" : ".app__section-task-list-item"
+    document.querySelectorAll(seletor).forEach(elemento => {
+        elemento.remove()
+    })
+    tarefas = somenteCompletas ? tarefas.filter(tarefa => tarefa.completa) : tarefas.filter(tarefa => !tarefa.completa)
+    atualizarTarefas()
+}
+
+btnRemoverConcluidas.onclick = () => removerTarefas(true)
+btnRemoverTodas.onclick = () => removerTarefas(false)
